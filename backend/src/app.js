@@ -5,6 +5,7 @@ const cors = require('cors');
 
 const authRoutes = require('./routes/authRoutes');
 const vehicleRoutes = require('./routes/vehicleRoutes');
+const maintenanceRoutes = require('./routes/maintenanceRoutes');
 
 
 const app = express();
@@ -24,6 +25,7 @@ app.get('/', (req, res) => {
 // Auth route'lari
 app.use('/api/auth', authRoutes);
 app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
 // Middleware'i import et
 const authMiddleware = require('./middleware/authMiddleware');
 
