@@ -2,7 +2,10 @@ const express = require('express');
 const cors = require('cors');
 
 // Route'lari import et
+
 const authRoutes = require('./routes/authRoutes');
+const vehicleRoutes = require('./routes/vehicleRoutes');
+
 
 const app = express();
 
@@ -20,6 +23,7 @@ app.get('/', (req, res) => {
 
 // Auth route'lari
 app.use('/api/auth', authRoutes);
+app.use('/api/vehicles', vehicleRoutes);
 // Middleware'i import et
 const authMiddleware = require('./middleware/authMiddleware');
 
