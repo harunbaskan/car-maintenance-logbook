@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
 
 // Route'lari import et
 
@@ -21,6 +23,8 @@ app.get('/', (req, res) => {
     status: 'OK' 
   });
 });
+// Swagger UI - API dokumantasyonu
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Auth route'lari
 app.use('/api/auth', authRoutes);
