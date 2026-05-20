@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Maintenance Logbook - Giris</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <div class="auth-container">
+    <div class="auth-card">
+      <h1>🚗 Car Maintenance Logbook</h1>
+      <p class="subtitle">Arac bakim takip sistemi</p>
+
+      <!-- Tab Butonlari -->
+      <div class="tabs">
+        <button id="loginTab" class="tab active" onclick="showLogin()">Giris Yap</button>
+        <button id="registerTab" class="tab" onclick="showRegister()">Kayit Ol</button>
+      </div>
+
+      <!-- Login Formu -->
+      <form id="loginForm" class="auth-form">
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Sifre" required>
+        <button type="submit" class="btn-primary">Giris Yap</button>
+      </form>
+
+      <!-- Register Formu -->
+      <form id="registerForm" class="auth-form hidden">
+        <input type="text" id="registerUsername" placeholder="Kullanici Adi" required>
+        <input type="email" id="registerEmail" placeholder="Email" required>
+        <input type="password" id="registerPassword" placeholder="Sifre (en az 6 karakter)" required>
+        <button type="submit" class="btn-primary">Kayit Ol</button>
+      </form>
+
+      <!-- Mesaj Alani -->
+      <div id="message" class="message hidden"></div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

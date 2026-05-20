@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Car Maintenance Logbook - Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="header-content">
+      <h1>🚗 Car Maintenance Logbook</h1>
+      <div class="header-right">
+        <span id="welcomeMsg"></span>
+        <button class="btn-logout" onclick="logout()">Cikis</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Araclar Bolumu -->
+    <section class="section">
+      <div class="section-header">
+        <h2>Araclarim</h2>
+        <button class="btn-primary" onclick="openVehicleModal()">+ Yeni Arac</button>
+      </div>
+      <div id="vehiclesList" class="vehicles-grid">
+        <!-- Araclar buraya JS ile gelecek -->
+      </div>
+    </section>
+
+    <!-- Bakim Kayitlari Bolumu (bir arac secilince gorunur) -->
+    <section id="maintenanceSection" class="section hidden">
+      <div class="section-header">
+        <h2 id="maintenanceTitle">Bakim Kayitlari</h2>
+        <button class="btn-primary" onclick="openMaintenanceModal()">+ Yeni Bakim</button>
+      </div>
+
+      <!-- Filtre -->
+      <div class="filter-bar">
+        <label>Filtrele:</label>
+        <select id="typeFilter" onchange="loadMaintenance()">
+          <option value="">Tum Tipler</option>
+          <option value="Yag degisimi">Yag degisimi</option>
+          <option value="Lastik degisimi">Lastik degisimi</option>
+          <option value="Fren bakimi">Fren bakimi</option>
+          <option value="Aku degisimi">Aku degisimi</option>
+          <option value="Periyodik bakim">Periyodik bakim</option>
+          <option value="Muayene">Muayene</option>
+          <option value="Sigorta">Sigorta</option>
+          <option value="Kasko">Kasko</option>
+          <option value="Diger">Diger</option>
+        </select>
+      </div>
+
+      <!-- Maliyet Ozeti -->
+      <div id="costSummary" class="cost-summary"></div>
+
+      <!-- Bakim Listesi -->
+      <div id="maintenanceList" class="maintenance-list"></div>
+    </section>
+  </main>
+
+  <!-- Arac Ekleme/Duzenleme Modal -->
+  <div id="vehicleModal" class="modal hidden">
+    <div class="modal-content">
+      <h3 id="vehicleModalTitle">Yeni Arac</h3>
+      <form id="vehicleForm">
+        <input type="hidden" id="vehicleId">
+        <input type="text" id="vMake" placeholder="Marka (BMW)" required>
+        <input type="text" id="vModel" placeholder="Model (M3)" required>
+        <input type="number" id="vYear" placeholder="Yil (2022)" required>
+        <input type="text" id="vPlate" placeholder="Plaka (34ABC123)" required>
+        <input type="number" id="vKm" placeholder="Guncel KM (25000)" required>
+        <select id="vFuel" required>
+          <option value="">Yakit Tipi Sec</option>
+          <option value="Benzin">Benzin</option>
+          <option value="Dizel">Dizel</option>
+          <option value="LPG">LPG</option>
+          <option value="Elektrik">Elektrik</option>
+          <option value="Hibrit">Hibrit</option>
+        </select>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeVehicleModal()">Iptal</button>
+          <button type="submit" class="btn-primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Bakim Ekleme Modal -->
+  <div id="maintenanceModal" class="modal hidden">
+    <div class="modal-content">
+      <h3>Yeni Bakim Kaydi</h3>
+      <form id="maintenanceForm">
+        <select id="mType" required>
+          <option value="">Bakim Tipi Sec</option>
+          <option value="Yag degisimi">Yag degisimi</option>
+          <option value="Lastik degisimi">Lastik degisimi</option>
+          <option value="Fren bakimi">Fren bakimi</option>
+          <option value="Aku degisimi">Aku degisimi</option>
+          <option value="Periyodik bakim">Periyodik bakim</option>
+          <option value="Muayene">Muayene</option>
+          <option value="Sigorta">Sigorta</option>
+          <option value="Kasko">Kasko</option>
+          <option value="Diger">Diger</option>
+        </select>
+        <input type="date" id="mDate" required>
+        <input type="number" id="mKm" placeholder="Bakimdaki KM" required>
+        <input type="number" id="mCost" placeholder="Maliyet (TL)" required>
+        <input type="text" id="mService" placeholder="Servis Adi (opsiyonel)">
+        <textarea id="mNotes" placeholder="Notlar (opsiyonel)"></textarea>
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" onclick="closeMaintenanceModal()">Iptal</button>
+          <button type="submit" class="btn-primary">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Mesaj Toast -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="js/api.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>
