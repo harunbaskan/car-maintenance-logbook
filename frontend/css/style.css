@@ -430,3 +430,8 @@ body {
 .toast.error {
   background: #e74c3c;
 }
+.maintenance-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}

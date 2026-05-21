@@ -5,18 +5,15 @@ if (!getToken()) {
 
 let selectedVehicleId = null;
 
-// Sayfa yuklenince araclari getir
 document.addEventListener('DOMContentLoaded', () => {
   loadVehicles();
 });
 
-// Cikis
 function logout() {
   removeToken();
   window.location.href = 'index.html';
 }
 
-// Toast mesaj goster
 function showToast(text, type = 'success') {
   const toast = document.getElementById('toast');
   toast.textContent = text;
@@ -58,7 +55,6 @@ async function loadVehicles() {
   }
 }
 
-// Arac sec -> bakim kayitlarini goster
 function selectVehicle(id, name) {
   selectedVehicleId = id;
   document.getElementById('maintenanceSection').classList.remove('hidden');
@@ -68,7 +64,6 @@ function selectVehicle(id, name) {
   document.getElementById('maintenanceSection').scrollIntoView({ behavior: 'smooth' });
 }
 
-// Arac Modal
 function openVehicleModal() {
   document.getElementById('vehicleModalTitle').textContent = 'Yeni Arac';
   document.getElementById('vehicleForm').reset();
@@ -105,7 +100,6 @@ async function deleteVehicle(id) {
     await apiCall(`/api/vehicles/${id}`, { method: 'DELETE' });
     showToast('Arac silindi');
     loadVehicles();
-    // Eger silinen arac secili ise bakim bolumunu gizle
     if (selectedVehicleId === id) {
       document.getElementById('maintenanceSection').classList.add('hidden');
       selectedVehicleId = null;
@@ -115,27 +109,38 @@ async function deleteVehicle(id) {
   }
 }
 
-// Arac formu submit
 document.getElementById('vehicleForm').addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const id = document.getElementById('vehicleId').value;
+
+  const year = parseInt(document.getElementById('vYear').value);
+  const km = parseInt(document.getElementById('vKm').value);
+  const currentYear = new Date().getFullYear();
+
+  if (isNaN(year) || year < 1900 || year > currentYear + 1) {
+    showToast('Yil 1900 ile ' + (currentYear + 1) + ' arasinda olmali', 'error');
+    return;
+  }
+  if (isNaN(km) || km < 0) {
+    showToast('Kilometre 0 veya pozitif olmali', 'error');
+    return;
+  }
+
   const vehicleData = {
     make: document.getElementById('vMake').value,
     model: document.getElementById('vModel').value,
-    year: parseInt(document.getElementById('vYear').value),
+    year: year,
     plate: document.getElementById('vPlate').value,
-    currentKm: parseInt(document.getElementById('vKm').value),
+    currentKm: km,
     fuelType: document.getElementById('vFuel').value
   };
 
   try {
     if (id) {
-      // Guncelleme
       await apiCall(`/api/vehicles/${id}`, { method: 'PUT', body: vehicleData });
       showToast('Arac guncellendi');
     } else {
-      // Yeni
       await apiCall('/api/vehicles', { method: 'POST', body: vehicleData });
       showToast('Arac eklendi');
     }
@@ -158,7 +163,6 @@ async function loadMaintenance() {
   }
 
   try {
-    // Bakimlari getir
     const result = await apiCall(endpoint);
     const list = document.getElementById('maintenanceList');
 
@@ -177,12 +181,14 @@ async function loadMaintenance() {
             ${m.serviceName ? `<p>🔧 ${m.serviceName}</p>` : ''}
             ${m.notes ? `<p>📝 ${m.notes}</p>` : ''}
           </div>
-          <button class="btn-small btn-danger" onclick="deleteMaintenance('${m._id}')">Sil</button>
+          <div class="maintenance-actions">
+            <button class="btn-small" onclick='editMaintenance(${JSON.stringify(m)})'>Duzenle</button>
+            <button class="btn-small btn-danger" onclick="deleteMaintenance('${m._id}')">Sil</button>
+          </div>
         </div>
       `).join('');
     }
 
-    // Maliyet ozetini getir (BONUS)
     loadCostSummary();
   } catch (error) {
     showToast(error.message, 'error');
@@ -214,7 +220,21 @@ async function loadCostSummary() {
 
 function openMaintenanceModal() {
   document.getElementById('maintenanceForm').reset();
+  document.getElementById('maintenanceId').value = '';
+  document.getElementById('maintenanceModalTitle').textContent = 'Yeni Bakim Kaydi';
   document.getElementById('mDate').valueAsDate = new Date();
+  document.getElementById('maintenanceModal').classList.remove('hidden');
+}
+
+function editMaintenance(m) {
+  document.getElementById('maintenanceModalTitle').textContent = 'Bakim Kaydi Duzenle';
+  document.getElementById('maintenanceId').value = m._id;
+  document.getElementById('mType').value = m.type;
+  document.getElementById('mDate').value = m.date ? m.date.split('T')[0] : '';
+  document.getElementById('mKm').value = m.kmAtService;
+  document.getElementById('mCost').value = m.cost;
+  document.getElementById('mService').value = m.serviceName || '';
+  document.getElementById('mNotes').value = m.notes || '';
   document.getElementById('maintenanceModal').classList.remove('hidden');
 }
 
@@ -234,25 +254,43 @@ async function deleteMaintenance(id) {
   }
 }
 
-// Bakim formu submit
 document.getElementById('maintenanceForm').addEventListener('submit', async (e) => {
   e.preventDefault();
+
+  const km = parseInt(document.getElementById('mKm').value);
+  const cost = parseFloat(document.getElementById('mCost').value);
+
+  if (isNaN(km) || km < 0) {
+    showToast('Kilometre 0 veya pozitif olmali', 'error');
+    return;
+  }
+  if (isNaN(cost) || cost < 0) {
+    showToast('Maliyet 0 veya pozitif olmali', 'error');
+    return;
+  }
 
   const maintenanceData = {
     type: document.getElementById('mType').value,
     date: document.getElementById('mDate').value,
-    kmAtService: parseInt(document.getElementById('mKm').value),
-    cost: parseFloat(document.getElementById('mCost').value),
+    kmAtService: km,
+    cost: cost,
     serviceName: document.getElementById('mService').value,
     notes: document.getElementById('mNotes').value
   };
 
+  const id = document.getElementById('maintenanceId').value;
+
   try {
-    await apiCall(`/api/maintenance/vehicle/${selectedVehicleId}`, {
-      method: 'POST',
-      body: maintenanceData
-    });
-    showToast('Bakim kaydi eklendi');
+    if (id) {
+      await apiCall(`/api/maintenance/${id}`, { method: 'PUT', body: maintenanceData });
+      showToast('Bakim kaydi guncellendi');
+    } else {
+      await apiCall(`/api/maintenance/vehicle/${selectedVehicleId}`, {
+        method: 'POST',
+        body: maintenanceData
+      });
+      showToast('Bakim kaydi eklendi');
+    }
     closeMaintenanceModal();
     loadMaintenance();
   } catch (error) {

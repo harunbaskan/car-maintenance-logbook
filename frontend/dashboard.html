@@ -7,7 +7,6 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="header-content">
       <h1>🚗 Car Maintenance Logbook</h1>
@@ -19,25 +18,20 @@
   </header>
 
   <main class="container">
-    <!-- Araclar Bolumu -->
     <section class="section">
       <div class="section-header">
         <h2>Araclarim</h2>
         <button class="btn-primary" onclick="openVehicleModal()">+ Yeni Arac</button>
       </div>
-      <div id="vehiclesList" class="vehicles-grid">
-        <!-- Araclar buraya JS ile gelecek -->
-      </div>
+      <div id="vehiclesList" class="vehicles-grid"></div>
     </section>
 
-    <!-- Bakim Kayitlari Bolumu (bir arac secilince gorunur) -->
     <section id="maintenanceSection" class="section hidden">
       <div class="section-header">
         <h2 id="maintenanceTitle">Bakim Kayitlari</h2>
         <button class="btn-primary" onclick="openMaintenanceModal()">+ Yeni Bakim</button>
       </div>
 
-      <!-- Filtre -->
       <div class="filter-bar">
         <label>Filtrele:</label>
         <select id="typeFilter" onchange="loadMaintenance()">
@@ -54,15 +48,11 @@
         </select>
       </div>
 
-      <!-- Maliyet Ozeti -->
       <div id="costSummary" class="cost-summary"></div>
-
-      <!-- Bakim Listesi -->
       <div id="maintenanceList" class="maintenance-list"></div>
     </section>
   </main>
 
-  <!-- Arac Ekleme/Duzenleme Modal -->
   <div id="vehicleModal" class="modal hidden">
     <div class="modal-content">
       <h3 id="vehicleModalTitle">Yeni Arac</h3>
@@ -89,11 +79,11 @@
     </div>
   </div>
 
-  <!-- Bakim Ekleme Modal -->
   <div id="maintenanceModal" class="modal hidden">
     <div class="modal-content">
-      <h3>Yeni Bakim Kaydi</h3>
+      <h3 id="maintenanceModalTitle">Yeni Bakim Kaydi</h3>
       <form id="maintenanceForm">
+        <input type="hidden" id="maintenanceId">
         <select id="mType" required>
           <option value="">Bakim Tipi Sec</option>
           <option value="Yag degisimi">Yag degisimi</option>
@@ -119,7 +109,6 @@
     </div>
   </div>
 
-  <!-- Mesaj Toast -->
   <div id="toast" class="toast hidden"></div>
 
   <script src="js/api.js"></script>
